@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 from os import listdir
 from os.path import isfile, join
 
-pathToSimFile = "/Users/bpopejoy/Documents/SIMDD2.txt"
+pathToSimFile = "/Users/bpopejoy/Documents/SIMDD2 2.txt"
+enrollmentStatusFieldID = "1094"
 username = ""
 passowrd = ""
 
@@ -17,7 +18,7 @@ def updateStudentInfo(redID, enrollmentStatus):
 	try:
 		handler = urllib2.urlopen(request)
 	except urllib2.HTTPError, e:
-		print "HTTPError = " + str(e.code)
+		print "HTTPError 1 = " + str(e.code)
 	except urllib2.URLError, e:
 		print "URLError = " + str(e.reason)
 	except httplib.HTTPException, e:
@@ -31,13 +32,13 @@ def updateStudentInfo(redID, enrollmentStatus):
 		root = ET.fromstring(response)
 		entryID = root[0][0].text
 		# Gets the custom field data unique to the student's enrollment status field.
-		request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/select/entrycustomfield.xml?entryid=" + entryID + "&customfielddefinitionid=1096")
+		request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/select/entrycustomfield.xml?entryid=" + entryID + "&customfielddefinitionid=" + enrollmentStatusFieldID)
 		base64string = base64.encodestring('%s:%s' % (username, passowrd)).replace('\n', '')
 		request.add_header("Authorization", "Basic %s" % base64string)
 		try:
 			handler = urllib2.urlopen(request)
 		except urllib2.HTTPError, e:
-			print "HTTPError = " + str(e.code)
+			print "HTTPError 2 = " + str(e.code)
 		except urllib2.URLError, e:
 			print "URLError = " + str(e.reason)
 		except httplib.HTTPException, e:
@@ -50,7 +51,7 @@ def updateStudentInfo(redID, enrollmentStatus):
 			response = handler.read()
 			root = ET.fromstring(response)
 			fieldID = root[0][0].text
-			# Updates the student's enrollment status with the data from the file. 
+			# Updates the student's enrollment status with the data from the file.
 			request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/update/entrycustomfield/" + fieldID)
 			data = urllib.urlencode({'valuestring' : enrollmentStatus})
 			base64string = base64.encodestring('%s:%s' % (username, passowrd)).replace('\n', '')
@@ -58,7 +59,7 @@ def updateStudentInfo(redID, enrollmentStatus):
 			try:
 				handler = urllib2.urlopen(request, data)
 			except urllib2.HTTPError, e:
-				print "HTTPError = " + str(e.code)
+				print "HTTPError 3 = " + str(e.code)
 				print e.read()
 			except urllib2.URLError, e:
 				print "URLError = " + str(e.reason)
