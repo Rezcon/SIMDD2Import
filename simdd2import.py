@@ -10,6 +10,7 @@ username = ""
 passowrd = ""
 
 def updateStudentInfo(redID, enrollmentStatus):
+	# Gets the student data with the specified RedID.
 	request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/select/entry.xml?id1=" + redID)
 	base64string = base64.encodestring('%s:%s' % (username, passowrd)).replace('\n', '')
 	request.add_header("Authorization", "Basic %s" % base64string)
@@ -25,9 +26,11 @@ def updateStudentInfo(redID, enrollmentStatus):
 		import traceback
 		print 'generic exception: ' + traceback.format_exc()
 	else:
+		# Extracts the student's entry ID from the data received.
 		response = handler.read()
 		root = ET.fromstring(response)
 		entryID = root[0][0].text
+		# Gets the custom field data unique to the student's enrollment status field.
 		request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/select/entrycustomfield.xml?entryid=" + entryID + "&customfielddefinitionid=1096")
 		base64string = base64.encodestring('%s:%s' % (username, passowrd)).replace('\n', '')
 		request.add_header("Authorization", "Basic %s" % base64string)
@@ -43,9 +46,11 @@ def updateStudentInfo(redID, enrollmentStatus):
 			import traceback
 			print 'generic exception: ' + traceback.format_exc()
 		else:
+			# Gets the custom field ID unique to the student and the enrollment status field.
 			response = handler.read()
 			root = ET.fromstring(response)
 			fieldID = root[0][0].text
+			# Updates the student's enrollment status with the data from the file. 
 			request = urllib2.Request("https://oncampuslivingtest.sdsu.edu/StarRezRESTtest/services/update/entrycustomfield/" + fieldID)
 			data = urllib.urlencode({'valuestring' : enrollmentStatus})
 			base64string = base64.encodestring('%s:%s' % (username, passowrd)).replace('\n', '')
@@ -66,6 +71,7 @@ def updateStudentInfo(redID, enrollmentStatus):
 				print redID + ' - Success'
 
 def main():
+	# Opens data file from path above and updates student info with RedID and enrollment status.
 	with open(pathToSimFile, 'rb') as csvfile:
 		reader = csv.reader(csvfile, delimiter=',', quotechar='|')
 		for row in reader:
